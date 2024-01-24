@@ -7,13 +7,10 @@ import { loggerMiddleware } from './common/middleware/logger.middleware';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Enable global validation filter
   app.useGlobalFilters(new ValidationFilter());
-
-  // Enable global logger middleware
   app.use(loggerMiddleware);
 
-  await app.listen(3000);
+  await app.listen(3030);
 }
 
 bootstrap();

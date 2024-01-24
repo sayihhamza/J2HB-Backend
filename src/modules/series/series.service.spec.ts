@@ -25,31 +25,31 @@ describe('SeriesService', () => {
     ];
 
     // When
-    const transformedData = seriesService['transformData'](inputData);
+    const transformedData = seriesService['transformSheetData'](inputData);
 
     // Then
     const expectedOutput =
       [
         {
-          questions: [
+          "questions": [
             {
-              question: "هَادْ الطَّرِيقْ يَمْكَنْ لِي الْقِيَّامْ بْالتَّجَاوُزْ:",
-              responses: [
+              "question": "هَادْ الطَّرِيقْ يَمْكَنْ لِي الْقِيَّامْ بْالتَّجَاوُزْ:",
+              "correction": [
+                0
+              ],
+              "responses": [
                 "نَعَمْ",
                 "لاَ"
-              ],
-              correction: [
-                0
               ]
             },
             {
-              question: "نَتْجَاوَزْ:",
-              responses: [
+              "question": "نَتْجَاوَزْ:",
+              "correction": [
+                1
+              ],
+              "responses": [
                 "نَعَمْ",
                 "لاَ"
-              ],
-              correction: [
-                1
               ]
             }
           ]
