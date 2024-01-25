@@ -1,12 +1,34 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { TrafficQuiz, TrafficQuestion } from './series.dto';
 import * as xlsx from 'xlsx';
+import * as fs from 'fs';
+import * as path from 'path';
+
 
 @Injectable()
 export class SeriesService {
-  private readonly seriesFilePath = 'public/resources/series.xlsx';
+  private seriesFilePath: string;
 
-  getSeries(): TrafficQuiz[] {
+  getAvailableTypes(): string[] {
+    const seriesPath = 'public/resources/series';
+    return fs.readdirSync(seriesPath, { withFileTypes: true })
+      .filter(dirent => dirent.isDirectory())
+      .map(dirent => dirent.name);
+  }
+
+  getNumberOfSeriesForType(type: string): number {
+    const seriesPath = path.join('public/resources/series', type);
+    const seriesFiles = fs.readdirSync(seriesPath);
+    return seriesFiles.length;
+  }
+
+  private getFilePath(type: string, number: string): string {
+    return `public/resources/series/${type}/series-${number}.xlsx`;
+  }
+
+  getSeries(type: string, number: string): TrafficQuiz[] {
+    this.seriesFilePath = this.getFilePath(type, number);
+
     try {
       const workbook = xlsx.readFile(this.seriesFilePath);
       const sheetName = workbook.SheetNames[0];

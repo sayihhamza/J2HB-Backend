@@ -8,6 +8,7 @@ async function bootstrap() {
 
   app.useGlobalFilters(new ValidationFilter());
   app.use(loggerMiddleware);
+  app.enableCors();
 
   await app.listen(3030);
 }
