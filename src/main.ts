@@ -1,10 +1,10 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { SeriesModule } from './modules/series/series.module';
 import { ValidationFilter } from './common/filters/validation.filter';
 import { loggerMiddleware } from './common/middleware/logger.middleware';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(SeriesModule);
 
   app.useGlobalFilters(new ValidationFilter());
   app.use(loggerMiddleware);
