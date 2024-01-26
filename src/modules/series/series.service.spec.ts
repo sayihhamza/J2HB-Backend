@@ -1,61 +1,41 @@
-import { SeriesService } from './series.service';
+import { readWorkbook, transformSheetData } from './series.helper';
 
 describe('SeriesService', () => {
-  let seriesService: SeriesService;
+  it('should read and transform data from xlsx file', () => {
+    // Arrange
+    const seriesPath = "public/resources/series-test/series-test.xlsx";
 
-  beforeEach(() => {
-    seriesService = new SeriesService();
-  });
+    // Act
+    const sheetData = readWorkbook(seriesPath);
+    const result = transformSheetData(sheetData);
 
-  it('should transform input data correctly', () => {
-    // Given
-    const inputData = [
-      [
-        {
-          'Question 1': 'هَادْ الطَّرِيقْ يَمْكَنْ لِي الْقِيَّامْ بْالتَّجَاوُزْ:',
-          'Reponse 1': 'نَعَمْ',
-          'Reponse 2': 'لاَ',
-          'Question 2': 'نَتْجَاوَزْ:',
-          'Reponse 2.1': 'نَعَمْ',
-          'Reponse 2.2': 'لاَ',
-          Correction: '1,4',
-          __EMPTY: 15
-        }
-      ]
+    const expectedOutput = [
+      {
+        questions: [
+          {
+            question: 'هَادْ الطَّرِيقْ يَمْكَنْ لِي الْقِيَّامْ بْالتَّجَاوُزْ:',
+            responses: ['نَعَمْ', 'لاَ'],
+            correction: [0],
+          },
+          {
+            question: 'نَتْجَاوَزْ:',
+            responses: ['نَعَمْ', 'لاَ'],
+            correction: [1],
+          },
+        ],
+      },
+      {
+        questions: [
+          {
+            question: 'الْمَخَالَفَاتْ مَنْ الدَّرَجَة الثَّانِيَة كَتْسْتَوْجَبْ أدَاءْ غَرَامَة مَالِيَة دْيَالْ:',
+            responses: ['700 دَرْهَمْ', '500 دَرْهَمْ', '300 دَرْهَمْ'],
+            correction: [1],
+          },
+        ],
+      },
     ];
 
-    // When
-    const transformedData = seriesService['transformSheetData'](inputData);
-
-    // Then
-    const expectedOutput =
-      [
-        {
-          "questions": [
-            {
-              "question": "هَادْ الطَّرِيقْ يَمْكَنْ لِي الْقِيَّامْ بْالتَّجَاوُزْ:",
-              "correction": [
-                0
-              ],
-              "responses": [
-                "نَعَمْ",
-                "لاَ"
-              ]
-            },
-            {
-              "question": "نَتْجَاوَزْ:",
-              "correction": [
-                1
-              ],
-              "responses": [
-                "نَعَمْ",
-                "لاَ"
-              ]
-            }
-          ]
-        }
-      ];
-
-    expect(transformedData).toEqual(expectedOutput);
-  });
+    // Assert
+    expect(result).toEqual(expectedOutput);
+  })
 });
