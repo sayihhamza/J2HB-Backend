@@ -18,6 +18,7 @@ To run this project locally, follow these steps : ( the application will be acce
 
 ## Usage
 
+
 ### Endpoints
 
 1. **Get Available Series Types**
@@ -42,10 +43,10 @@ To run this project locally, follow these steps : ( the application will be acce
   **Input :**
         - Represents the content of the "adults/series-2.xlsx" file.
 
-| Question 1                                                     | Reponse 1 | Reponse 2 | Reponse 3 | Reponse 4 | Question 2                                                     | Reponse 2.1 | Reponse 2.2 | Correction |
-|----------------------------------------------------------------|-----------|-----------|-----------|-----------|----------------------------------------------------------------|------------|------------|------------|
-| هَادْ الطَّرِيقْ يَمْكَنْ لِي الْقِيَّامْ بْالتَّجَاوُزْ:     | نَعَمْ     | لاَ       |           |           | نَتْجَاوَزْ:                                                 | نَعَمْ      | لاَ        | 1,4        |
-| الْمَخَالَفَاتْ مَنْ الدَّرَجَة الثَّانِيَة كَتْسْتَوْجَبْ أدَاءْ غَرَامَة مَالِيَة دْيَالْ: | 700 دَرْهَمْ | 500 دَرْهَمْ | 300 دَرْهَمْ |           |                                                             |            |            | 2          |
+| Question 1                                                     | Reponse 1 | Reponse 2 | Reponse 3 | Reponse 4 | Question 2                                                     | Reponse 2.1 | Reponse 2.2 | Correction | Justification               | Image                                                                                                                | Audio                                                                |
+|----------------------------------------------------------------|-----------|-----------|-----------|-----------|----------------------------------------------------------------|------------|------------|------------|----------------------------|----------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------|
+| هَادْ الطَّرِيقْ يَمْكَنْ لِي الْقِيَّامْ بْالتَّجَاوُزْ:     | نَعَمْ     | لاَ       |           |           | نَتْجَاوَزْ:                                                 | نَعَمْ      | لاَ        | 1,4        | [Justification for Question 1] | [ImageURL for Question 1]                                                                                            | [AudioURL for Question 1]                                           |
+| الْمَخَالَفَاتْ مَنْ الدَّرَجَة الثَّانِيَة كَتْسْتَوْجَبْ أدَاءْ غَرَامَة مَالِيَة دْيَالْ: | 700 دَرْهَمْ | 500 دَرْهَمْ | 300 دَرْهَمْ |           |                                                             |            |            | 2          | [Justification for Question 2] | [ImageURL for Question 2]                                                                                            | [AudioURL for Question 2]                                           |
 
   **Output :**
         -  Illustrates the transformed JSON object returned by the API.
@@ -73,14 +74,17 @@ To run this project locally, follow these steps : ( the application will be acce
                     1
                 ]
             }
-        ]
+        ],
+        "image": "[Image URL for Question 1]",
+        "audio": "[Audio URL for Question 1]",
+        "justification": "[Justification for Question 1]"
     },
     {
         "questions": [
             {
                 "question": "الْمَخَالَفَاتْ مَنْ الدَّرَجَة الثَّانِيَة كَتْسْتَوْجَبْ أدَاءْ غَرَامَة مَالِيَة دْيَالْ:",
                 "responses": [
-                    " 700 دَرْهَمْ ",
+                    "700 دَرْهَمْ",
                     "500 دَرْهَمْ",
                     "300 دَرْهَمْ"
                 ],
@@ -88,6 +92,9 @@ To run this project locally, follow these steps : ( the application will be acce
                     1
                 ]
             }
-        ]
+        ],
+        "image": "[Image URL for Question 2]",
+        "audio": "[Audio URL for Question 2]",
+        "justification": "[Justification for Question 2]"
     }
 ]

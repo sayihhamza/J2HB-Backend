@@ -1,5 +1,3 @@
-// series-helper.ts
-
 import * as xlsx from 'xlsx';
 import * as path from 'path';
 import { NotFoundException } from '@nestjs/common';
@@ -11,9 +9,8 @@ export function getSeriesFilePath(type: string, number: string): string {
 
 export function readWorkbook(seriesFilePath: string): any[] {
     try {
-        const workbook = xlsx.readFile(seriesFilePath);
-        const sheetName = workbook.SheetNames[0];
-        return xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+        const sheetName = xlsx.readFile(seriesFilePath).SheetNames[0];
+        return xlsx.utils.sheet_to_json(xlsx.readFile(seriesFilePath).Sheets[sheetName]);
     } catch (error) {
         console.error('Error reading series.xlsx:', error);
         throw new NotFoundException('Series data not found');
@@ -21,26 +18,28 @@ export function readWorkbook(seriesFilePath: string): any[] {
 }
 
 export function transformSheetData(data: any[]): TrafficQuiz[] {
-    return data.map(row => ({
-        questions: createQuestions(row, extractCorrections(row)),
+    const trimedData = trimData(data);
+
+    return trimedData.map(row => ({
+        questions: createQuestions(row, getCorrections(row)),
+        image: row['Image'],
+        audio: row['Audio'],
+        justification: row['Justification'],
     }));
 }
 
-export function createQuestions(row: any, corrections: number[]): TrafficQuestion[] {
+function createQuestions(row: any, corrections: number[]): TrafficQuestion[] {
     if (row['Question 2']) {
         return [
-            createQuestion(row, 'Question 1', [row['Reponse 1'], row['Reponse 2']], corrections.slice(0, 1)),
-            createQuestion(row, 'Question 2', [row['Reponse 2.1'], row['Reponse 2.2']], corrections.slice(1).map(v => v - 2))
+            createQuestion(row, 'Question 1', getResponses(row, '1', '2'), corrections.slice(0, 1)),
+            createQuestion(row, 'Question 2', getResponses(row, '2.1', '2.2'), corrections.slice(1).map(v => v - 2))
         ];
     } else {
-        const responses = Object.entries(row)
-            .filter(([key, value]) => typeof key === 'string' && key.startsWith('Reponse'))
-            .map(([, value]) => value as string);
-        return [createQuestion(row, 'Question 1', responses, corrections)];
+        return [createQuestion(row, 'Question 1', getResponses(row), corrections)];
     }
 }
 
-export function createQuestion(row: any, questionKey: string, responses: string[], corrections: number[]): TrafficQuestion {
+function createQuestion(row: any, questionKey: string, responses: string[], corrections: number[]): TrafficQuestion {
     return {
         question: row[questionKey],
         responses,
@@ -48,11 +47,32 @@ export function createQuestion(row: any, questionKey: string, responses: string[
     };
 }
 
-export function extractCorrections(row: any): number[] {
+function getResponses(row: any, ...keys: (string | number)[]): string[] {
+    if (keys.length === 0) {
+        keys = Object.keys(row).filter(key => key.includes('Reponse'));
+        return keys.map(key => row[key]);
+    }
+
+    return keys.map(key => row[`Reponse ${key}`]);
+}
+
+function getCorrections(row: any): number[] {
     const correctionString = row['Correction'] as string;
-    const corrections = typeof correctionString === 'string'
-        ? correctionString.split(',').map(Number)
-        : [Number(correctionString)];
+    const corrections = typeof correctionString === 'string' ?
+        correctionString.split(',').map(Number) :
+        [Number(correctionString)];
 
     return corrections.map(v => v - 1);
+}
+
+function trimData(data: any): any {
+    const trimedData = [];
+    data.map(row => {
+        const trimedRow = {};
+        for (const [key, value] of Object.entries(row)) {
+            trimedRow[key] = (typeof value === 'string' ? value.trim() : value);
+        }
+        trimedData.push(trimedRow);
+    });
+    return trimedData;
 }

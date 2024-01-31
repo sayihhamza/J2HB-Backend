@@ -6,4 +6,4 @@ import { SeriesController } from './series.controller';
   providers: [SeriesService],
   controllers: [SeriesController]
 })
-export class SeriesModule {}
+export class SeriesModule { }
