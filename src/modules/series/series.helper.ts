@@ -1,10 +1,43 @@
 import * as xlsx from 'xlsx';
 import * as path from 'path';
+import * as fs from 'fs';
 import { NotFoundException } from '@nestjs/common';
 import { TrafficQuestion, TrafficQuiz } from './series.dto';
 
-export function getSeriesFilePath(type: string, number: string): string {
-    return path.join('public/resources/series', type, `series-${number}.xlsx`);
+export function getSeriesFilePath(language: string, type: string, number: string): string {
+    return path.join('public/resources/series', language, type, `serie-${number}`, 'questions.xlsx');
+}
+
+function getImageFilePath(language: string, type: string, seriesNumber: string, questionNumber: string): string {
+    try {
+        const imageFormats = ['jpg', 'jpeg', 'png'];
+
+        for (const format of imageFormats) {
+            const imagePath = path.join('public/resources/series', language, type, `serie-${seriesNumber}/images`, `image-${questionNumber}.${format}`);
+            console.log(imagePath);
+
+            if (fs.existsSync(imagePath)) {
+                return imagePath;
+            }
+        }
+
+    } catch (error) {
+        console.error(`Error : ${error}`);
+        throw new NotFoundException("Image not found with the given format");
+    }
+}
+
+function getAudioFilePath(language: string, type: string, seriesNumber: string, questionNumber: string): string {
+    try {
+        const audioPath = path.join('public/resources/series', language, type, `serie-${seriesNumber}/audios`, `audio-${questionNumber}.mp3`);
+
+        if (fs.existsSync(audioPath)) {
+            return audioPath;
+        }
+    } catch (error) {
+        console.error(`Error ${error}`);
+        throw new NotFoundException("Audio not found with the given format");
+    }
 }
 
 export function readWorkbook(seriesFilePath: string): any[] {
@@ -17,13 +50,13 @@ export function readWorkbook(seriesFilePath: string): any[] {
     }
 }
 
-export function transformSheetData(data: any[]): TrafficQuiz[] {
+export function transformSheetData(data: any[], { language, type, number }): TrafficQuiz[] {
     const trimedData = trimData(data);
 
-    return trimedData.map(row => ({
+    return trimedData.map((row, index) => ({
         questions: createQuestions(row, getCorrections(row)),
-        image: row['Image'],
-        audio: row['Audio'],
+        image: getImageFilePath(language, type, number, index + 1),
+        audio: getAudioFilePath(language, type, number, index + 1),
         justification: row['Justification'],
     }));
 }

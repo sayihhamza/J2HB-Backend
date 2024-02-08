@@ -6,18 +6,23 @@ import { TrafficQuiz } from './series.dto';
 export class SeriesController {
     constructor(private readonly seriesService: SeriesService) { }
 
-    @Get('types')
-    getSeriesTypes(): string[] {
-        return this.seriesService.getAvailableTypes();
+    @Get('languages')
+    getSeriesLanguages(): string[] {
+        return this.seriesService.getAvilableLanguages();
     }
 
-    @Get(':type/count')
-    getSeriesCount(@Param('type') type: string) {
-        return this.seriesService.getNumberOfSeriesForType(type);
+    @Get(':language/types')
+    getSeriesTypes(@Param('language') language: string): string[] {
+        return this.seriesService.getAvailableTypes(language);
     }
 
-    @Get(':type/:number')
-    getSeriesByTypeAndNumber(@Param('type') type: string, @Param('number') number: string): TrafficQuiz[] {
-        return this.seriesService.getSeries(type, number);
+    @Get(':language/:type/count')
+    getSeriesCount(@Param('language') language: string, @Param('type') type: string) {
+        return this.seriesService.getSeriesCount(language, type);
+    }
+
+    @Get(':language/:type/:number')
+    getSeriesByTypeAndNumber(@Param('language') language: string, @Param('type') type: string, @Param('number') number: string): TrafficQuiz[] {
+        return this.seriesService.getSeries(language, type, number);
     }
 }

@@ -8,22 +8,29 @@ import { getSeriesFilePath, readWorkbook, transformSheetData } from './series.he
 export class SeriesService {
   private seriesFilePath: string;
 
-  getAvailableTypes(): string[] {
+  getAvilableLanguages(): string[] {
     const seriesPath = 'public/resources/series';
     return fs.readdirSync(seriesPath, { withFileTypes: true })
       .filter(dirent => dirent.isDirectory())
       .map(dirent => dirent.name);
   }
 
-  getNumberOfSeriesForType(type: string): number {
-    const seriesPath = path.join('public/resources/series', type);
+  getAvailableTypes(language: string): string[] {
+    const seriesPath = `public/resources/series/${language}`;
+    return fs.readdirSync(seriesPath, { withFileTypes: true })
+      .filter(dirent => dirent.isDirectory())
+      .map(dirent => dirent.name);
+  }
+
+  getSeriesCount(language: string, type: string): number {
+    const seriesPath = path.join('public/resources/series', language, type);
     const seriesFiles = fs.readdirSync(seriesPath);
     return seriesFiles.length;
   }
 
-  getSeries(type: string, number: string): TrafficQuiz[] {
-    this.seriesFilePath = getSeriesFilePath(type, number);
+  getSeries(language: string, type: string, number: string): TrafficQuiz[] {
+    this.seriesFilePath = getSeriesFilePath(language, type, number);
     const sheetData = readWorkbook(this.seriesFilePath);
-    return transformSheetData(sheetData);
+    return transformSheetData(sheetData, { language, type, number });
   }
 }
